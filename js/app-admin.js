@@ -100,6 +100,21 @@
   
  }
 
+ var config = {  
+  apiKey: "AIzaSyCtWgfZWdUQVRyC0W1NdlV3Zx9Q16I6Nf4",
+  authDomain: "azarel-1a865.firebaseapp.com",
+  databaseURL: "https://azarel-1a865.firebaseio.com",
+  projectId: "azarel-1a865",
+  storageBucket: "azarel-1a865.appspot.com",
+  messagingSenderId: "963834795291"
+};
+
+
+firebase.initializeApp(config);
+
+const messaging = firebase.messaging();
+var dbfirestore = firebase.firestore();
+
  let app = new App();
  app.init();
  
@@ -129,9 +144,25 @@ function MakeTableAnimalsWeb(){
     $('#pagWeb').show();  
 }
 function OpenModalAnimals(id, pos){
+  var fecha = getID('txtDate');
+  var sorteo = $('#cmbHours option:selected');
+  var loteria = $('#cmbLottery option:selected');
+  if(fecha.value == '' || sorteo.val() == '00x' || loteria.val() == '00x'){
+    Materialize.toast("Todos los campos son obligatorios", 3000, 'rounded');
+    return false;
+  }
   var animal = app.ANIMALS[pos];
-  var lblNumberAnimalsModal = getID('lblPremio'); 
-  lblNumberAnimalsModal.innerHTML = `${animal.key} - ${animal.value}`;
+  var bodyContents = getID('bodyContents'); 
+  $("#ngames").val(animal.key);
+  var msg = `<h5>Asignando premio</h5><br>
+    Usted ha seleccionado: 
+    <br>Fecha  : <label>${fecha.value}</label>
+    <br>Loteria: <label>${loteria.text()}</label>
+    <br>Sorteo : <label>${sorteo.text()}</label>.<br><br>
+    ¿Está seguro que desea premiar el numero <label id='lblPremio'>${animal.key} - ${animal.value}</label>?
+  `
+  bodyContents.innerHTML = msg;
+
   $('#modAnimals').modal();
   $('#modAnimals').modal('open');
   $('#mdlPag1').show();

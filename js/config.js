@@ -175,6 +175,7 @@ function LoadComponentMaterialize(){
     today: 'Hoy',
     clear: 'Limpiar',
     close: 'Ok',
+    format: 'dd/mm/yyyy',
     closeOnSelect: false // Close upon selecting a date,
   });
   $('.button-collapse').sideNav('hide');
