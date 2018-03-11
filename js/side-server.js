@@ -62,14 +62,13 @@ function assignedPrize(){
     console.log('Se ha creado los resultados');
   });
 
-
+  console.log(dateplay);
   dbfirestore.collection('bets').doc(dateplay)
   .collection(playing)
   .get().then( doc => {
       var winnerAll = [];        
       var total = 0;
-      
-      doc.forEach(d => {
+      doc.forEach(d => {         
           var money = d.data().bets.money;
           var uid =  d.data().bets.uid;
           var id = d.id;
@@ -89,29 +88,39 @@ function assignedPrize(){
           }
           total += parseFloat(money);
           winnerAll.push(winner);
+
+          console.log(assigned);
           dbfirestore.collection("competitor").doc(uid).collection("winner")
-          .add(assigned).then( d => {
+          .add(assigned)
+          .then( d => {
             console.log("Asignado ganador ", d);
           }).catch(e => {
             console.log("No se logro asignar ganador", e);
           });
       });
-      
-      var winn = {
+      if(total > 0 ){
+        var tot = total * 30;
+        var winn = {
           timestamp : firebase.firestore.FieldValue.serverTimestamp(),
           date : dateplay,
           playin : playing,
           prize : winnerAll,
-          money : total * 30
-      };
+          money : tot
+        };
 
-      dbfirestore.collection('winner').add(winn)
-      .then( doc => {
-          console.log('Winer finished... ');
-          return doc.id;
-      }).catch(e => {
-          console.log('Err winner: ', e);            
-      })
+        dbfirestore.collection('winner').add(winn)
+        .then( doc => {
+            console.log('Winer finished... ');
+            return doc.id;
+        }).catch(e => {
+            console.log('Err winner: ', e);            
+        });
+        var premio = `Monto por premio: ${parseFloat(tot)} Bs.`;
+        Materialize.toast(premio, 2000, 'rounded');
+      }else{
+        Materialize.toast('No se registraron ganadores...', 3000, 'rounded');
+      }
+      
       
   });
 }
